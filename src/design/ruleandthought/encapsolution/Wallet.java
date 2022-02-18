@@ -8,6 +8,7 @@ import java.security.InvalidParameterException;
  * 对外暴露属性的读写功能时按照方法进行封装，不可以让用户看到或可以操作形如 wallet.id=3 这种操作
  * 用户仅需要知道增加和减少balance的操作方法
  * 可以读取到各个属性的值
+ *
  * @author yudazhi
  */
 public class Wallet {

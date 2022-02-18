@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/designleetcode.iml" filepath="$PROJECT_DIR$/designleetcode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/basic_soft_study.iml" filepath="$PROJECT_DIR$/.idea/basic_soft_study.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hystrixcommand/hystrixcommand.iml" filepath="$PROJECT_DIR$/hystrixcommand/hystrixcommand.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring_ioc/spring_ioc.iml" filepath="$PROJECT_DIR$/spring_ioc/spring_ioc.iml" />
     </modules>
   </component>
 </project>
