@@ -5,6 +5,13 @@ package java01.basic.datastructure.basic.linkedlist;
  */
 public class LinkedList {
 
+    /**
+     * 合并有序链表
+     *
+     * @param n1
+     * @param n2
+     * @return
+     */
     private static Node merge(Node n1, Node n2) {
         if (n1 == null) {
             return n2;
@@ -21,6 +28,12 @@ public class LinkedList {
         }
     }
 
+    /**
+     * 反转链表
+     *
+     * @param root
+     * @return
+     */
     private static Node reverse(Node root) {
         Node prev = null;
         Node temp = root;

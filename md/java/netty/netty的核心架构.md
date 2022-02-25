@@ -1,0 +1,49 @@
+### 一、netty的核心组件和架构设计
+
+- 核心组件
+    + core：底层网络通信的通用抽象和实现
+    + protocol-support：协议支持，http，ssl，websocket等
+    + transport-service：socket，http隧道，虚拟机管道传输，对tcp和udp等数据进行了抽象二号封装，用户只需要关注业务逻辑
+- 逻辑架构
+    + 网络通信层
+    + 时间调度层
+    + 服务编排层
+
+### 二、详解netty的架构设计
+
+- 网络通信层
+    + 核心组件介绍
+        - bootstrap
+            + 负责netty的启动、初始化、服务器连接等过程，是一条串联其他核心组件的主线
+            + 可以连接远程服务器
+            + 只绑定一个eventLoopGroup
+        - serverBootStrap
+            + 服务端启动绑定本地端口
+            + 绑定两个eventLoopGroup
+                - boss不停的接受新连接
+                - 将连接分配给一个个worker处理连接
+        - channel
+            + 网络通信的载体，提供和基本的API用于网络I/O操作
+                - register，bind，connect，read，write，flush
+            + Nio（Server）SocketChannel：异步TCP（服务）客户端
+            + Oio（Server）SocketChannel：同步TCP（服务）客户端
+            + NioDatagramChannel：异步UDP连接
+            + OioDatagramChannel：同步UDP连接
+            + channel状态机制
+                - registered
+                - unregistered
+                - active
+                - inactive
+                - read
+                - readComplete
+- 时间调度层
+    + 核心组件介绍
+        - eventLoopGroup/eventLoop/channel
+        - 一个eventLoopGroup对应一个线程池，包含多个eventLoop处理
+        - eventLoop用于处理channel生命周期内的所有I/O事件
+        - 每次新建一个channel，eventLoopGroup都会选择一个eventLoop和其绑定，且此channel在生命周期内可以与eventLoop进行多次绑定和解绑
+        - 较为推荐的使用实现是NioEventLoopGroup
+        - 多种线程模型
+            + 单线程模型，boss和worker使用唯一的一个线程
+            + 多线程模型，boss和worker使用一个线程，线程池中包含多个线程
+            + 主从多线程模型，boss是主reactor（负责新的网络连接channel创建，将channel注册到从reactor），worker是从

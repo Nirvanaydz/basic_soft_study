@@ -1,0 +1,41 @@
+### 一、redis使用问题详解
+
+- redis全局hash表
+    + 保存所有的键值对
+    + 单个hash表中的结构体
+        - dictEntry结构体
+            + key8字节，指向key的RedisObject
+            + value8字节，指向value的RedisObject
+            + next指针8字节，指向下一个dictEntry
+        - redis使用jemalloc进行内存分配，
+            + 会根据我们申请的字节数 N
+            + 找一个比 N 大，但是最接近 N 的 2 的幂次数作为分配的空间，这样可以减少频繁分配的次数
+- 大内存redis生产RDB响应慢的问题
+- redis中string（万金油保存）的问题
+    + 保存数据时消耗的内存空间较多
+        - 除了记录实际数据
+        - 额外的空间记录数据长度，内存使用等信息，称这些数据为元数据
+        - 保存形式
+            + 保存有符号的整数时，保存为8字节的Ling类型整数，称之为int编码方式
+            + 保存数据包含字符时，通过简单动态字符串来保存
+                - len（4B，标识buf已经使用的长度）、alloc（4B，标识buf实际分配的长度）、buf（"实际字节数组数据\0""）
+                - 其中len和alloc都是额外开销，还有一个redisObject开销
+                - redisObject
+                    + 元数据（8B），不同类型的数据有些相同的元数据要记录
+                        - 最后一次访问事件
+                        - 被引用的次数等
+                    + ptr指针（8B），指向某一数据结构所在的内存地址
+                        - 三种编码方式
+                        - int编码，在指向有符号整数时，ptr中存储的就是实际值，占8个字节大小
+                        - embstr，在字符串小于等于44字节时，str指向的sds空间（和redisObject绑定）就跟在ptr之后
+                        - raw编码，字符串大于44字节时，另外有一个空间，不和redisObject绑定
+    + 集合类型的数据结构保存数据消耗的内存空间明显较少
+        - 复习zipList的结构
+        - 如何使用集合类型保存单值的键值对
+            - 对hash类型进行二级编码（！重要的方式）
+                + 将key拆分，一部分作为hash的键，一部分key（变为hash类型中的key）和原来的value（hash类型中的value）
+            - hash类型是由压缩列表和hash表实现的，在什么时候hash类型使用压缩列表，什么时候使用hash表呢？
+                + 阈值设置：
+                    - 最大元素个数：hash_max_ziplist_entries
+                    - 单个元素最大值:hash_max_ziplist_value
+                + 在超过阈值设置时，会自动将hash类型的实现由压缩列表变成hash表
