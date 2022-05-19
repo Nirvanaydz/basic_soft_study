@@ -118,6 +118,7 @@ public class AccumulationCode {
     private static void characterFunctions() {
         System.out.println(Character.isDigit('a'));
         System.out.println(Character.isLetter('a'));
+        System.out.println(Character.isLetterOrDigit('a'));
         System.out.println(Character.getNumericValue('a'));
         System.out.println(Character.getNumericValue(' '));
         System.out.println(Integer.parseInt("-123"));

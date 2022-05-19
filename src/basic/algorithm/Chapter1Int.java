@@ -215,6 +215,39 @@ public class Chapter1Int {
         return result / m;
     }
 
+    /**
+     * 将一个字符串翻译成数字
+     * 判断两个数字的2进制位都不同如：1010101 & 101010 == 0 每一位取与运算都是0
+     *
+     * @param words
+     * @return
+     */
+    public int maxProduct(String[] words) {
+        int[] converts = new int[words.length];
+        for (int i = 0; i < words.length; i++) {
+            converts[i] = convert(words[i]);
+        }
+        int result = 0;
+        for (int i = 0; i < words.length - 1; i++) {
+            for (int j = i + 1; j < words.length; j++) {
+                if ((converts[i] & converts[j]) == 0) {
+                    result = Math.max(result, words[i].length() * words[j].length());
+                }
+            }
+        }
+        return result;
+    }
+
+    private int convert(String a) {
+        int map = 0;
+        for (char c : a.toCharArray()) {
+            //  若当前string阶段出的数据是 101，那么代表当前字符串为 ca组成的多个拼接成的多种字符串
+            //  map = map | 1 << idx 每取出一个char，都和1取与运算并右移char-a位，代表在此位置的字母存在
+            map |= 1 << (c - 'a');
+        }
+        return map;
+    }
+
 
     public static void main(String[] args) {
         System.out.println(new Chapter1Int().singleNumber(new int[]{1, 2, 1, 2, 1, 2, 100, 100}, 3, 2));
